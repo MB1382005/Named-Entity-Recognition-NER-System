@@ -41,35 +41,41 @@ class NEREngine:
             "token-classification",
             model=self.model,
             tokenizer=self.tokenizer,
-            aggregation_strategy="simple",
+            aggregation_strategy="first",
             device=device,
         )
 
     def extract(self, text: str) -> Dict[str, Any]:
         raw_entities = self.pipe(text)
-        entities: List[Dict[str, Any]] = []
-        counts = {"PER": 0, "ORG": 0, "LOC": 0, "MISC": 0}
+        merged: List[Dict[str, Any]] = []
 
         for ent in raw_entities:
             grp = ent["entity_group"]
             start, end = int(ent["start"]), int(ent["end"])
-            span_text = text[start:end]
-            score = round(float(ent["score"]) * 100, 1)
-            if grp in counts:
-                counts[grp] += 1
-            entities.append({
-                "text": span_text,
-                "label": grp,
-                "start": start,
-                "end": end,
-                "score": score,
-            })
+            score = float(ent["score"])
+            if merged and merged[-1]["label"] == grp and text[merged[-1]["end"]:start].strip() == "":
+                merged[-1]["end"] = end
+                merged[-1]["text"] = text[merged[-1]["start"]:end]
+                merged[-1]["score"] = round(((merged[-1]["score"] / 100.0 + score) / 2.0) * 100, 1)
+            else:
+                merged.append({
+                    "text": text[start:end],
+                    "label": grp,
+                    "start": start,
+                    "end": end,
+                    "score": round(score * 100, 1),
+                })
+
+        counts = {"PER": 0, "ORG": 0, "LOC": 0, "MISC": 0}
+        for item in merged:
+            if item["label"] in counts:
+                counts[item["label"]] += 1
 
         return {
             "text": text,
-            "entities": entities,
+            "entities": merged,
             "counts": counts,
-            "total": len(entities),
+            "total": len(merged),
             "model_name": self.model_name,
         }
 
