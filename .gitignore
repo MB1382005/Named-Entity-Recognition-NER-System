@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.zip
+*.pt
+*.pth
+saved_ner_model/transformer/*.safetensors
+saved_ner_model/transformer/*.bin
+bert_ner_ckpts/
+.ipynb_checkpoints/

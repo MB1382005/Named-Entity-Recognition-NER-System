@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EntityDesk — Soft Pastel NER Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="workspace-shell">
+    <!-- Warm Pastel Sidebar (Notion / Figma style) -->
+    <aside class="sidebar">
+      <div>
+        <div class="ws-brand">
+          <div class="ws-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 7h16M4 12h10M4 17h13" stroke-linecap="round"/>
+              <circle cx="18" cy="14" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="ws-name">EntityDesk</div>
+            <div class="ws-sub">NER Workspace</div>
+          </div>
+        </div>
+
+        <div class="nav-group-label">WORKSPACE</div>
+        <nav class="side-nav">
+          <button class="tab-link active" data-view="annotator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span>Annotator</span>
+          </button>
+          <button class="tab-link" data-view="benchmarks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M18 20V10M12 20V4M6 20v-6" stroke-linecap="round"/></svg>
+            <span>Benchmarks</span>
+          </button>
+          <button class="tab-link" data-view="schema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18"/></svg>
+            <span>Tag Guide</span>
+          </button>
+        </nav>
+
+        <div class="nav-group-label" style="margin-top:26px;">ENTITY LEGEND</div>
+        <div class="side-legend">
+          <div class="sleg"><span class="sdot dot-per"></span><span>Person</span><code>PER</code></div>
+          <div class="sleg"><span class="sdot dot-org"></span><span>Organization</span><code>ORG</code></div>
+          <div class="sleg"><span class="sdot dot-loc"></span><span>Location</span><code>LOC</code></div>
+          <div class="sleg"><span class="sdot dot-misc"></span><span>Misc</span><code>MISC</code></div>
+        </div>
+      </div>
+
+      <div class="side-footer">
+        <div class="model-pill">
+          <span class="live-dot"></span>
+          <span id="modelTag">bert-base-cased</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Canvas -->
+    <main class="canvas">
+      <!-- VIEW 1: ANNOTATOR -->
+      <section class="view active" id="view-annotator">
+        <div class="page-head">
+          <div>
+            <h1>Named Entity Annotator</h1>
+            <p>Highlight people, organizations, locations, and named spans from any text.</p>
+          </div>
+          <div class="mini-kpis">
+            <div class="mkpi mk-per"><span>PER</span><strong id="cnt-PER">0</strong></div>
+            <div class="mkpi mk-org"><span>ORG</span><strong id="cnt-ORG">0</strong></div>
+            <div class="mkpi mk-loc"><span>LOC</span><strong id="cnt-LOC">0</strong></div>
+            <div class="mkpi mk-misc"><span>MISC</span><strong id="cnt-MISC">0</strong></div>
+          </div>
+        </div>
+
+        <div class="grid-main">
+          <!-- Document Column -->
+          <div class="col-left">
+            <div class="soft-card">
+              <div class="card-head">
+                <span class="card-title">Document</span>
+                <div class="presets">
+                  <button class="preset-btn" data-sample="Satya Nadella announced that Microsoft will open a new AI research center in Cairo next March.">Tech News</button>
+                  <button class="preset-btn" data-sample="Lionel Messi scored twice for Inter Miami during their match against New York City FC.">Sports</button>
+                  <button class="preset-btn" data-sample="Apple and Google are collaborating with European Union regulators in Brussels on privacy standards.">EU Policy</button>
+                  <button class="preset-btn preset-ghost" id="clearBtn">Clear</button>
+                </div>
+              </div>
+
+              <textarea
+                id="sourceInput"
+                rows="4"
+                placeholder="Write or paste a paragraph here..."
+              ></textarea>
+
+              <div class="card-foot">
+                <span class="shortcut">Press Ctrl + Enter</span>
+                <button id="extractBtn" class="btn-soft-dark">Extract Entities</button>
+              </div>
+            </div>
+
+            <div class="error-strip hidden" id="errorStrip"></div>
+
+            <div class="soft-card">
+              <div class="card-head">
+                <span class="card-title">Annotated Preview</span>
+                <span class="count-pill" id="totalCount">0 spans</span>
+              </div>
+              <div class="annotated-prose" id="annotatedProse">
+                <span class="prose-empty">Highlighted entities will appear here in soft pastel tags.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detected Spans Column -->
+          <aside class="soft-card inspector">
+            <div class="card-head">
+              <span class="card-title">Extracted Spans</span>
+            </div>
+            <div class="filter-bar" id="filterBar">
+              <button class="filter-pill active" data-filter="ALL">All <span id="cnt-ALL">0</span></button>
+              <button class="filter-pill" data-filter="PER">PER</button>
+              <button class="filter-pill" data-filter="ORG">ORG</button>
+              <button class="filter-pill" data-filter="LOC">LOC</button>
+              <button class="filter-pill" data-filter="MISC">MISC</button>
+            </div>
+            <div class="entity-list" id="entityList">
+              <div class="list-empty">No entities extracted yet.</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- VIEW 2: BENCHMARKS -->
+      <section class="view" id="view-benchmarks">
+        <div class="page-head">
+          <div>
+            <h1>Model Benchmarks</h1>
+            <p>CoNLL-2003 entity-level evaluation using <code>seqeval</code>.</p>
+          </div>
+        </div>
+
+        <div class="soft-card" style="margin-bottom: 18px;">
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1-Score</th>
+              </tr>
+            </thead>
+            <tbody id="benchBody"></tbody>
+          </table>
+        </div>
+
+        <div class="soft-card hidden" id="reportCard" style="margin-bottom: 18px;">
+          <div class="card-head"><span class="card-title">Per-Entity Seqeval Report (BERT-base-cased · 91.40% F1)</span></div>
+          <pre class="report-pre" id="reportPre"></pre>
+        </div>
+
+        <div class="soft-card" style="margin-bottom: 18px;">
+          <div class="card-head"><span class="card-title">4-Model Benchmark Chart (CoNLL-2003 · seqeval)</span></div>
+          <div style="padding: 18px;">
+            <img src="/static/charts/cell_15_img_2.png" alt="4-Model NER Benchmark" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
+          </div>
+        </div>
+
+        <div class="soft-card" style="margin-bottom: 18px;">
+          <div class="card-head"><span class="card-title">CRF Boundary Analysis — Illegal IOB Transitions on Test Set</span></div>
+          <table class="clean-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Illegal IOB Transitions</th>
+                <th>Observation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>BiLSTM + CRF</strong></td><td><strong>17</strong></td><td>CRF eliminates 90% of BiLSTM boundary errors via Viterbi decoding</td></tr>
+              <tr><td>BERT-base-cased</td><td>43</td><td>Highest overall F1 (91.40%) via contextual subword attention</td></tr>
+              <tr><td>BiLSTM</td><td>169</td><td>Bidirectional context cuts LSTM boundary errors by more than half</td></tr>
+              <tr><td>LSTM</td><td>392</td><td>Unidirectional baseline without transition constraints</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="soft-card">
+          <div class="card-head"><span class="card-title">CoNLL-2003 Dataset Exploration (Entity Distribution &amp; Sentence Lengths)</span></div>
+          <div style="padding: 18px;">
+            <img src="/static/charts/cell_6_img_1.png" alt="CoNLL-2003 EDA" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: TAG GUIDE -->
+      <section class="view" id="view-schema">
+        <div class="page-head">
+          <div>
+            <h1>IOB2 Tag Guide</h1>
+            <p>Entity categories and boundary tags used in CoNLL-2003.</p>
+          </div>
+        </div>
+        <div class="schema-grid" id="schemaGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
