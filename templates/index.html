@@ -158,19 +158,67 @@
           </table>
         </div>
 
-        <div class="soft-card hidden" id="reportCard" style="margin-bottom: 18px;">
-          <div class="card-head"><span class="card-title">Per-Entity Seqeval Report (BERT-base-cased · 91.40% F1)</span></div>
-          <pre class="report-pre" id="reportPre"></pre>
-        </div>
-
         <div class="soft-card" style="margin-bottom: 18px;">
-          <div class="card-head"><span class="card-title">4-Model Benchmark Chart (CoNLL-2003 · seqeval)</span></div>
-          <div style="padding: 18px;">
-            <img src="/static/charts/cell_15_img_2.png" alt="4-Model NER Benchmark" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
+          <div class="card-head">
+            <span class="card-title">Per-Entity Performance (BERT-base-cased · 91.40% Micro F1)</span>
+            <span class="count-pill">5,648 Test Entities</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px;">
+            <div style="background:#e0f2fe;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#0369a1;">PER · People</span>
+                <span style="font-size:11px;color:#0369a1;opacity:0.8;">1,617</span>
+              </div>
+              <div style="font-size:26px;font-weight:800;color:#0369a1;margin-bottom:6px;">96.16%</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#0369a1;">P: 96.3% · R: 96.0%</div>
+            </div>
+
+            <div style="background:#dcfce7;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#15803d;">LOC · Locations</span>
+                <span style="font-size:11px;color:#15803d;opacity:0.8;">1,668</span>
+              </div>
+              <div style="font-size:26px;font-weight:800;color:#15803d;margin-bottom:6px;">93.46%</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#15803d;">P: 93.2% · R: 93.8%</div>
+            </div>
+
+            <div style="background:#f3e8ff;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#7e22ce;">ORG · Orgs</span>
+                <span style="font-size:11px;color:#7e22ce;opacity:0.8;">1,661</span>
+              </div>
+              <div style="font-size:26px;font-weight:800;color:#7e22ce;margin-bottom:6px;">89.40%</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7e22ce;">P: 88.4% · R: 90.4%</div>
+            </div>
+
+            <div style="background:#ffedd5;border-radius:12px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c2410c;">MISC · Other</span>
+                <span style="font-size:11px;color:#c2410c;opacity:0.8;">702</span>
+              </div>
+              <div style="font-size:26px;font-weight:800;color:#c2410c;margin-bottom:6px;">80.69%</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#c2410c;">P: 78.0% · R: 83.6%</div>
+            </div>
           </div>
         </div>
 
-        <div class="soft-card" style="margin-bottom: 18px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:18px;">
+          <div class="soft-card">
+            <div class="card-head"><span class="card-title">4-Model Benchmark Chart (seqeval)</span></div>
+            <div style="padding: 16px;">
+              <img src="/static/charts/cell_15_img_2.png" alt="4-Model NER Benchmark" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
+            </div>
+          </div>
+
+          <div class="soft-card">
+            <div class="card-head"><span class="card-title">CoNLL-2003 Dataset Exploration</span></div>
+            <div style="padding: 16px;">
+              <img src="/static/charts/cell_6_img_1.png" alt="CoNLL-2003 EDA" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="soft-card">
           <div class="card-head"><span class="card-title">CRF Boundary Analysis — Illegal IOB Transitions on Test Set</span></div>
           <table class="clean-table">
             <thead>
@@ -187,13 +235,6 @@
               <tr><td>LSTM</td><td>392</td><td>Unidirectional baseline without transition constraints</td></tr>
             </tbody>
           </table>
-        </div>
-
-        <div class="soft-card">
-          <div class="card-head"><span class="card-title">CoNLL-2003 Dataset Exploration (Entity Distribution &amp; Sentence Lengths)</span></div>
-          <div style="padding: 18px;">
-            <img src="/static/charts/cell_6_img_1.png" alt="CoNLL-2003 EDA" style="width:100%;border-radius:10px;border:1px solid #ebe7e0;" />
-          </div>
         </div>
       </section>
 
